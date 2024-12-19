@@ -1,47 +1,33 @@
 "use client";
 import SimpleInput from "@/components/common/inputs/simpleInput/simpleInput";
-import { IconBrandGithub, IconBrandGoogle } from "@tabler/icons-react";
-import { useForm, SubmitHandler } from "react-hook-form";
 import { Button } from "@/components/ui/button";
+import { LoginFormProps } from "@/lib/types/authProps";
+import { LoginSchema } from "@/lib/validationSchema/AuthSchema";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { SignUpSchema } from "@/lib/validationSchema/AuthSchema";
-import { SignUpFormProps } from "@/lib/types/authProps";
+import { IconBrandGithub, IconBrandGoogle } from "@tabler/icons-react";
+import { SubmitHandler, useForm } from "react-hook-form";
 
-const SignupForm = () => {
+const LoginForm = () => {
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<SignUpFormProps>({
-    resolver: yupResolver<SignUpFormProps>(SignUpSchema),
+  } = useForm<LoginFormProps>({
+    resolver: yupResolver<LoginFormProps>(LoginSchema),
   });
 
-  const onSubmit: SubmitHandler<SignUpFormProps> = async (data) => {
-    console.log("Signup data: ", data);
+  const onSubmit: SubmitHandler<LoginFormProps> = async (data) => {
+    console.log("Login data: ", data);
   };
 
   return (
-    <div className="max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-white dark:bg-black">
+    <div className="max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 shadow-input my-16 bg-white dark:bg-black">
       <h2 className="font-bold text-center text-xl text-neutral-800 dark:text-neutral-200">
-        Signup to Aceternity
+        Login
       </h2>
 
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
         <div className="my-8">
-          <SimpleInput
-            control={control}
-            name="firstName"
-            label="First Name"
-            required={true}
-            errorMessage={errors.firstName ? errors?.firstName?.message : ""}
-          />
-          <SimpleInput
-            control={control}
-            name="lastName"
-            label="Last Name"
-            required={true}
-            errorMessage={errors.lastName ? errors?.lastName?.message : ""}
-          />
           <SimpleInput
             control={control}
             name="email"
@@ -50,7 +36,6 @@ const SignupForm = () => {
             required={true}
             errorMessage={errors.email ? errors?.email?.message : ""}
           />
-
           <SimpleInput
             control={control}
             name="password"
@@ -61,7 +46,7 @@ const SignupForm = () => {
           />
         </div>
         <div className="flex justify-center items-center w-full">
-          <Button className="text-center w-full">Sign up &rarr;</Button>
+          <Button className="text-center w-full">Login &rarr;</Button>
         </div>
 
         <div className="bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700 to-transparent my-8 h-[1px] w-full" />
@@ -85,4 +70,4 @@ const SignupForm = () => {
   );
 };
 
-export default SignupForm;
+export default LoginForm;

@@ -1,10 +1,10 @@
-import SignupForm from "@/components/main/SignupForm";
+import HeroSection from "@/components/main/heroSection";
 
 export default function Home() {
   return (
     <>
       <section>
-        <SignupForm />
+        <HeroSection />
       </section>
     </>
   );

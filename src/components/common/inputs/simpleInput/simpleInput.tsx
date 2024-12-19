@@ -58,7 +58,7 @@ const SimpleInput = ({
             autoComplete={autoComplete}
             onChange={(e) => {
               field?.onChange(e);
-              onChange && onChange(e);
+              onChange?.(e);
             }}
             onPaste={onPaste}
             onKeyDown={onKeyDown}
