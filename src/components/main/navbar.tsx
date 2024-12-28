@@ -1,10 +1,23 @@
 "use client";
-import { useState } from "react";
+import { APILogout } from "@/lib/helper";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import Cookies from "js-cookie";
+import { setLocalToken } from "@/lib/store/GetNewToken";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-
+  const dispatch = useDispatch();
+  const { localToken } = useSelector(
+    (state: { GetToken: { localToken: string } }) => state.GetToken
+  );
+  useEffect(() => {
+    const mainToken = Cookies.get("newToken");
+    if (mainToken) {
+      dispatch(setLocalToken(mainToken));
+    }
+  }, []);
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
@@ -16,15 +29,29 @@ const Navbar = () => {
           <Link href="/">JD</Link>
         </div>
         <div className="hidden md:flex space-x-8">
-          <Link href="/" className="hover:text-gray-400">
-            Home
-          </Link>
-          <Link href="/login" className="hover:text-gray-400">
-            Login
-          </Link>
-          <Link href="/signup" className="hover:text-gray-400">
-            Sign Up
-          </Link>
+          {localToken ? (
+            <>
+              <Link href="/profile" className="hover:text-gray-400">
+                Profile
+              </Link>
+              <Link
+                href="#"
+                onClick={() => APILogout()}
+                className="hover:text-gray-400"
+              >
+                Logout
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link href="/login" className="hover:text-gray-400">
+                Login
+              </Link>
+              <Link href="/signup" className="hover:text-gray-400">
+                Sign up
+              </Link>
+            </>
+          )}
         </div>
 
         <button
@@ -73,23 +100,29 @@ const Navbar = () => {
         </div>
 
         <div className="flex flex-col items-center space-y-6 pt-20">
-          <Link href="/" className="text-white text-xl" onClick={toggleMenu}>
-            Home
-          </Link>
-          <Link
-            href="/login"
-            className="text-white text-xl"
-            onClick={toggleMenu}
-          >
-            Login
-          </Link>
-          <Link
-            href="/signup"
-            className="text-white text-xl"
-            onClick={toggleMenu}
-          >
-            Sign Up
-          </Link>
+          {localToken ? (
+            <>
+              <Link href="/profile" className="hover:text-gray-400">
+                Profile
+              </Link>
+              <Link
+                href="#"
+                onClick={() => APILogout()}
+                className="hover:text-gray-400"
+              >
+                Logout
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link href="/login" className="hover:text-gray-400">
+                Login
+              </Link>
+              <Link href="/signup" className="hover:text-gray-400">
+                Sign up
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </nav>

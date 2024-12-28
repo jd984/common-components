@@ -6,8 +6,13 @@ import { Button } from "@/components/ui/button";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { SignUpSchema } from "@/lib/validationSchema/AuthSchema";
 import { SignUpFormProps } from "@/lib/types/authProps";
+import { useState } from "react";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 const SignupForm = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
   const {
     control,
     handleSubmit,
@@ -17,13 +22,24 @@ const SignupForm = () => {
   });
 
   const onSubmit: SubmitHandler<SignUpFormProps> = async (data) => {
-    console.log("Signup data: ", data);
+    try {
+      setIsLoading(true);
+      const response = await axios.post("/api/users/signup", data);
+      console.log("Success, User signup", response);
+      if (response?.status === 200) {
+        setIsLoading(false);
+        router.push("/login");
+      }
+    } catch (error) {
+      setIsLoading(false);
+      console.log("Handle signup error", error);
+    }
   };
 
   return (
-    <div className="max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-white dark:bg-black">
+    <div className="max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 my-16 shadow-input bg-white dark:bg-black">
       <h2 className="font-bold text-center text-xl text-neutral-800 dark:text-neutral-200">
-        Signup to Aceternity
+        Signup
       </h2>
 
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
@@ -61,7 +77,9 @@ const SignupForm = () => {
           />
         </div>
         <div className="flex justify-center items-center w-full">
-          <Button className="text-center w-full">Sign up &rarr;</Button>
+          <Button disabled={isLoading} className="text-center w-full">
+            Sign up &rarr;
+          </Button>
         </div>
 
         <div className="bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700 to-transparent my-8 h-[1px] w-full" />

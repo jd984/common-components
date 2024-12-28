@@ -1,13 +1,22 @@
 "use client";
 import SimpleInput from "@/components/common/inputs/simpleInput/simpleInput";
 import { Button } from "@/components/ui/button";
+import { setLocalToken } from "@/lib/store/GetNewToken";
 import { LoginFormProps } from "@/lib/types/authProps";
 import { LoginSchema } from "@/lib/validationSchema/AuthSchema";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { IconBrandGithub, IconBrandGoogle } from "@tabler/icons-react";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
+import Cookies from "js-cookie";
 
 const LoginForm = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const dispatch = useDispatch();
   const {
     control,
     handleSubmit,
@@ -17,7 +26,22 @@ const LoginForm = () => {
   });
 
   const onSubmit: SubmitHandler<LoginFormProps> = async (data) => {
-    console.log("Login data: ", data);
+    try {
+      setIsLoading(true);
+      const response = await axios.post("/api/users/login", data);
+      console.log("Success, User login", response);
+      if (response?.status === 200) {
+        const cookie = response.headers["x-middleware-set-cookie"];
+        const token = cookie?.split(";")[0].split("=")[1];
+        Cookies.set("newToken", token);
+        dispatch(setLocalToken(token));
+        setIsLoading(false);
+        router.push("/profile");
+      }
+    } catch (error) {
+      setIsLoading(false);
+      console.log("Handle login error", error);
+    }
   };
 
   return (
@@ -46,7 +70,9 @@ const LoginForm = () => {
           />
         </div>
         <div className="flex justify-center items-center w-full">
-          <Button className="text-center w-full">Login &rarr;</Button>
+          <Button disabled={isLoading} className="text-center w-full">
+            Login &rarr;
+          </Button>
         </div>
 
         <div className="bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700 to-transparent my-8 h-[1px] w-full" />
